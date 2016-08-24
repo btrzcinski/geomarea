@@ -1,0 +1,124 @@
+<html>
+<head>
+<title>Relationship between area, diagonals, and sides of a rectangle</title>
+<script src='https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
+<script src='js/ocanvas-2.8.5.min.js'></script>
+</head>
+<body style="text-align: center;">
+<p style="text-align: left;"><a href="index.html">Back</a></p>
+<p>A rectangle has both a width and a height, and an area and perimeter formed by those two characteristics.</p>
+<canvas width="240" height="140" id="basicRectangle"></canvas>
+<script>
+function drawStarterRectangle(canvasId) {
+var basicRectangle = oCanvas.create({
+    canvas: canvasId 
+});
+
+basicRectangle.display.rectangle({
+    x: 20,
+    y: 20,
+    width: 200,
+    height: 100,
+    stroke: "center 5px rgb(0, 0, 0)"
+}).add();
+
+basicRectangle.display.text({
+    x: 120,
+    y: 0,
+    origin: { x: "center", y: "top" },
+    font: "italic 18px serif",
+    text: "w",
+    fill: "#000"
+}).add();
+
+basicRectangle.display.text({
+    x: 5,
+    y: 70,
+    origin: { x: "left", y: "center" },
+    font: "italic 18px serif",
+    text: "h",
+    fill: "#000"
+}).add();
+
+return basicRectangle;
+}
+
+drawStarterRectangle('#basicRectangle');
+</script>
+<p>$$Area = w \cdot h$$</p>
+<p>$$Perimeter = 2w + 2h$$</p>
+<p>A rectangle can be represented by just the <font color="red">diagonal</font> connecting the two opposite corners.</p>
+<canvas width="240" height="140" id="rectangleWithDiagonal"></canvas>
+<script>
+var rectangleWithDiagonal = drawStarterRectangle('#rectangleWithDiagonal');
+
+rectangleWithDiagonal.display.line({
+    start: { x: 20, y: 120 },
+    end: { x: 220, y: 20 },
+    stroke: "3px #f00"
+    
+}).add();
+</script>
+<p>This diagonal has a length that is related to the width and height with the Pythagorean theorem:</p>
+<p>$$d^2 = w^2 + h^2$$</p>
+<p>$$d = \sqrt{w^2 + h^2}$$</p>
+<p>One can resize the rectangle - adjusting both the width and height - while keeping this diagonal length constant. Imagine dragging your mouse cursor in a circle after having created a rectangle with it.<p>
+<canvas width="440" height="440" id="animatedRectangle"></canvas>
+<script>
+var animatedRectangle = oCanvas.create({
+    canvas: '#animatedRectangle'
+});
+
+animatedRectangle.display.ellipse({
+    x: 220,
+    y: 220,
+    radius_x: 200,
+    radius_y: 200,
+    stroke: "3px #000"
+}).add();
+
+animatedRectangle.display.ellipse({
+    x: 220,
+    y: 220,
+    radius_x: 3,
+    radius_y: 3,
+    stroke: "1px #000",
+    fill: "#000"
+}).add();
+
+var animatingRect = animatedRectangle.display.rectangle({
+    x: 220,
+    y: 220,
+    width: 200,
+    height: 0,
+    stroke: "2px #000",
+    fill: "rgba(0, 0, 255, 0.2)"
+});
+animatedRectangle.addChild(animatingRect);
+
+var widthAnimationFactor = 1;
+var heightFactor = 1;
+animatedRectangle.setLoop(function() {
+    if (animatingRect.width <= -200) {
+        widthAnimationFactor = 1;
+        heightFactor = -1;
+    }
+    if (animatingRect.width >= 200) {
+        widthAnimationFactor = -1;
+        heightFactor = 1;
+    }
+
+    animatingRect.width += widthAnimationFactor;
+    animatingRect.height = heightFactor * Math.sqrt(Math.pow(200, 2) - Math.pow(animatingRect.width, 2));
+
+    document.getElementById('widthCounter').innerHTML = Math.abs(Math.floor(animatingRect.width));
+    document.getElementById('heightCounter').innerHTML = Math.abs(Math.floor(animatingRect.height));
+    document.getElementById('areaCounter').innerHTML = Math.abs(Math.floor(animatingRect.width * animatingRect.height));
+    document.getElementById('perimeterCounter').innerHTML = Math.abs(Math.floor(animatingRect.width + animatingRect.height));
+}).start();
+
+</script>
+<p>Area = <span id="areaCounter">0</span>, Perimeter = <span id="perimeterCounter">0</span>, w = <span id="widthCounter">0</span>, h = <span id="heightCounter">0</span></p>
+<p>While the diagonal length remains the same, the width and height vary - and so do the perimeter and area.</p>
+</body>
+</html>
